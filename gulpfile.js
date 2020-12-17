@@ -1,17 +1,15 @@
 // Changed vars to const for optimization reasons
-const gulp        = require('gulp');
-const browserSync = require('browser-sync');
-const sass        = require('gulp-sass');
-const rename      = require('gulp-rename');
-const rename      = 
+const gulp         = require('gulp');
+const browserSync  = require('browser-sync');
+const sass         = require('gulp-sass');
+const rename       = require('gulp-rename');
+const autoprefixer = require('gulp-autoprefixer');
+const cleanCSS     = require('gulp-clean-css');
 
 
 
-// Creating a Gulp task for an installed gulp package
-// Packages are installed globally first, then as development dependencies
 // Launching a Static server. Name of a task in quotes can be changed to whatever you like
 gulp.task('server', function() {
-
     browserSync.init({
         server: {
             // A folder to launch the terminal from
@@ -27,6 +25,15 @@ gulp.task('styles', function () {
     return gulp.src("styles/*.+(scss|sass)")
         // Compiling
         .pipe(sass({outputStyle: 'compressed'}).on('error', sass.logError))
+        // Adding ".min" to compressed files
+        .pipe(rename({
+            prefix: "",
+            suffix: ".min",
+        }))
+        .pipe(autoprefixer({
+            cascade: false
+        }))
+        .pipe(cleanCSS({compatibility: 'ie8'}))
         // Sending them to a destination folder
         .pipe(gulp.dest("styles/css"))
         // Launching browserSync after completion
